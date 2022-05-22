@@ -170,3 +170,9 @@ class LiteSet(LiteCollection):
             self._autocommit = autocommit_before
         if self._autocommit:
             self.commit()
+
+    def union(self, another_set):
+        '''Return the union of sets as a new LiteSet'''
+        output = LiteSet(another_set)
+        output.update(self)
+        return output

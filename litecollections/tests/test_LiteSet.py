@@ -144,6 +144,21 @@ class Test_LiteSet(TestCase):
                 self.assertTrue(s.issuperset(set_to_lead))
                 self.assertTrue(set_to_lead.issuperset(s))
 
+    def test_union(self):
+        '''tests if LiteSet mirrors what a set would do for set.issuperset()'''
+        with LiteSet(range(0, 10)) as s1, LiteSet(range(10, 20)) as s2:
+            s3 = s1.union(s2)
+            self.assertIsInstance(s3, LiteSet)
+            self.assertTrue(s1.issubset(s3))
+            self.assertTrue(s2.issubset(s3))
+            self.assertTrue(s3.issuperset(s1))
+            self.assertTrue(s3.issuperset(s2))
+            for i in s1:
+                self.assertIn(i, s3)
+            for i in s2:
+                self.assertIn(i, s3)
+            
+
 class Test_LiteSet_HypthesisBeatdown(TestCase):
     def generate_type_test(self, member_strategy):
         '''acts as a harness for type hypothesis to try different type combos'''
