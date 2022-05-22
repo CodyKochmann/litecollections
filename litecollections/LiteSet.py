@@ -211,3 +211,17 @@ class LiteSet(LiteCollection):
         else:
             self.backup(backup_path=db_path)
             return LiteSet(db_path=db_path)
+
+    def difference_update(self, items_to_remove):
+        '''Remove all elements of another set from this set'''
+        iter(items_to_remove)  # assert items_to_remove is iterable
+        autocommit_before = self._autocommit
+        try:
+            self._autocommit = False
+            # perf note: this would be faster with an insert many operation later
+            for v in items_to_remove:
+                self.discard(v)
+        finally:
+            self._autocommit = autocommit_before
+        if self._autocommit:
+            self.commit()
