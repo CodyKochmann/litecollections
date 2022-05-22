@@ -238,6 +238,28 @@ class Test_LiteSet(TestCase):
                 self.assertSetEqual(s2, std_s2)
                 self.assertSetEqual(s2.symmetric_difference(s1), std_s2.symmetric_difference(s1))
 
+    def test_copy(self):
+        '''tests if LiteSet mirrors what a set would do for set.copy'''
+        for _ in range(4):
+            with LiteSet() as s1:
+                for _ in range(4):
+                    s1.add(randint(0, 8))
+                std_s1 = set(s1)
+                s2 = s1.copy()
+                std_s2 = std_s1.copy()
+                self.assertSetEqual(s2, std_s2)
+                item_to_remove = s1.pop()
+                self.assertIn(item_to_remove, std_s1)
+                self.assertIn(item_to_remove, s2)
+                self.assertIn(item_to_remove, std_s2)
+                s2.remove(item_to_remove)
+                self.assertTrue(item_to_remove not in s2, msg='{locals()}')
+                self.assertTrue(item_to_remove in std_s2, msg='{locals()}')
+                std_s2.remove(item_to_remove)
+                self.assertTrue(item_to_remove not in std_s2, msg='{locals()}')                
+                self.assertSetEqual(s1, s2)
+                self.assertSetEqual(s2, std_s2)
+                s2.close()
 
 class Test_LiteSet_HypthesisBeatdown(TestCase):
     def generate_type_test(self, member_strategy):

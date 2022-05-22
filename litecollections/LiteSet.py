@@ -202,3 +202,12 @@ class LiteSet(LiteCollection):
                 (i for i in other_set if i not in self)
             )
         )
+    
+    def copy(self, db_path=':memory:'):
+        '''Returns a copy of this LiteSet with the given storage path'''
+        assert isinstance(db_path, str), db_path
+        if db_path == ':memory:':
+            return LiteSet(self)
+        else:
+            self.backup(backup_path=db_path)
+            return LiteSet(db_path=db_path)
