@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from itertools import chain
+
 from .LiteCollection import LiteCollection
 from .LiteExceptions import InvalidPositionalArgCount, EmptyLiteSet
 from .loader import load, dump
@@ -191,3 +193,12 @@ class LiteSet(LiteCollection):
     def isdisjoint(self, other_set):
         '''Return True if two sets have a null intersection'''
         return not any(i in self for i in other_set)
+    
+    def symmetric_difference(self, other_set):
+        '''Return all elements that are in exactly one of the sets as a new LiteSet'''
+        return LiteSet(
+            chain(
+                (i for i in self if i not in other_set), 
+                (i for i in other_set if i not in self)
+            )
+        )

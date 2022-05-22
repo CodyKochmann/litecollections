@@ -227,6 +227,17 @@ class Test_LiteSet(TestCase):
                 self.assertSetEqual(s2, std_s2)
                 self.assertEqual(s2.isdisjoint(s1), std_s2.isdisjoint(s1), msg=f'{locals()}')
 
+    def test_symmetric_difference(self):
+        '''tests if LiteSet mirrors what a set would do for set.symmetric_difference against other sets'''
+        for _ in range(4):
+            with LiteSet() as s1, LiteSet() as s2:
+                for _ in range(4):
+                    s1.add(randint(0, 8))
+                    s2.add(randint(0, 8))
+                std_s2 = set(s2)
+                self.assertSetEqual(s2, std_s2)
+                self.assertSetEqual(s2.symmetric_difference(s1), std_s2.symmetric_difference(s1))
+
 
 class Test_LiteSet_HypthesisBeatdown(TestCase):
     def generate_type_test(self, member_strategy):
