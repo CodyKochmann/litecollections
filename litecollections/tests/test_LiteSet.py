@@ -112,6 +112,21 @@ class Test_LiteSet(TestCase):
                 with self.assertRaises(KeyError):
                     s.remove(letter)
 
+    def test_issubset(self):
+        '''tests if LiteSet mirrors what a set would do for set.issubset()'''
+        with LiteSet() as s:
+            test_string = 'hello world'
+            set_to_follow = set()
+            for n in range(10):
+                self.assertEqual(len(s), len(set_to_follow))
+                set_to_follow.add(n)
+                self.assertIn(n, set_to_follow)
+                self.assertTrue(s.issubset(set_to_follow))
+                self.assertFalse(set_to_follow.issubset(s))
+                s.add(n)
+                self.assertIn(n, s)
+                self.assertTrue(s.issubset(set_to_follow))
+                self.assertTrue(set_to_follow.issubset(s))
 
 class Test_LiteSet_HypthesisBeatdown(TestCase):
     def generate_type_test(self, member_strategy):
