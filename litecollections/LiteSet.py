@@ -42,8 +42,9 @@ class LiteSet(LiteCollection):
         # load in any data passed to the constructor
         if set_args:
             # if other args exist, the user probably wants
-            # the normal dict() constructor behavior
-            self.update(set(*set_args))
+            # the normal set() constructor behavior
+            iter(set_args[0])  # assert set_args[0] is iterable
+            self.update(set_args[0])
         
     def __contains__(self, value):
         assert hashable(value), f'unhashable input {value}'
@@ -117,6 +118,20 @@ class LiteSet(LiteCollection):
             # note to self: this will be more efficent using temporary tables during mass scale operations
             return all(i in another_set for i in self)
 
+    def issuperset(self, another_set):
+        '''Report whether this set contains another set'''
+        # see if we can short cut with len() alone
+        if len(another_set) == 0:
+            # empty sets are always subsets of other sets
+            return True
+        elif len(self) < len(another_set):
+            # supersets cannot be bigger than the target
+            return False
+        else:
+            # perf note: this will be more efficent using temporary tables during mass scale operations
+            return all(i in self for i in another_set)
+
+
     def __iter__(self):
         '''Iterate through the values in the LiteSet'''
         query = self._cursor.execute(
@@ -140,12 +155,16 @@ class LiteSet(LiteCollection):
     def __repr__(self):
         return repr(set(self))
         
-    def update(self, update_set):
-        assert isinstance(update_set, dict), update_set
+    def update(self, new_items_to_insert):
+        '''Update a set with the union of itself and others'''
+        # only ensure input is iterable because it might be another massive
+        # LiteCollection that doesn't need to be completely in ram
+        iter(new_items_to_insert)  # assert new_items_to_insert is iterable
         autocommit_before = self._autocommit
         try:
             self._autocommit = False
-            for v in update_set:
+            # perf note: this would be faster with an insert many operation later
+            for v in new_items_to_insert:
                 self.add(v)
         finally:
             self._autocommit = autocommit_before
