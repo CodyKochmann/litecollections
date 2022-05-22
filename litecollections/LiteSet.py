@@ -66,6 +66,14 @@ class LiteSet(LiteCollection):
         if self._autocommit:
             self.commit()
 
+    def clear(self):
+        '''Remove all elements from this LiteSet'''
+        list(self._cursor.execute(
+            'delete from value_store'
+        ))
+        if self._autocommit:
+            self.commit()
+
     def pop(self):
         '''Remove and return an arbitrary LiteSet element. Raises EmptyLiteSet(KeyError) if the set is empty.'''
         if len(self) == 0:
