@@ -47,14 +47,16 @@ class LiteSet(LiteCollection):
         
     def __contains__(self, value):
         assert hashable(value), f'unhashable input {value}'
-        count, = self._cursor.execute(
+        query = self._cursor.execute(
             '''
                 SELECT count(value) FROM value_store WHERE value=? LIMIT 1
             ''',
             [dump(value)]
-        ).fetchone()
-        return count == 1
-    
+        )
+        for count, in query:
+            return count == 1
+        assert False, 'this line should never happen'
+
     def add(self, value):
         '''adds new values to the LiteSet'''
         assert hashable(value), f'unhashable input {value}'
@@ -100,6 +102,20 @@ class LiteSet(LiteCollection):
             self.discard(value)
         else:
             raise KeyError(value)
+    
+    def issubset(self, another_set):
+        '''Report whether another set contains this set'''
+        # see if we can short cut with len() alone
+        l = len(self)
+        if l == 0:
+            # empty sets are always subsets of other sets
+            return True
+        elif l > len(another_set):
+            # subsets cannot be bigger than the target
+            return False
+        else:
+            # note to self: this will be more efficent using temporary tables during mass scale operations
+            return all(i in another_set for i in self)
 
     def __iter__(self):
         '''Iterate through the values in the LiteSet'''
