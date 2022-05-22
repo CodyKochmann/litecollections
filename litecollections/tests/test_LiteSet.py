@@ -145,7 +145,7 @@ class Test_LiteSet(TestCase):
                 self.assertTrue(set_to_lead.issuperset(s))
 
     def test_union(self):
-        '''tests if LiteSet mirrors what a set would do for set.issuperset()'''
+        '''tests if LiteSet mirrors what a set would do for set.union against other LiteSets'''
         with LiteSet(range(0, 10)) as s1, LiteSet(range(10, 20)) as s2:
             s3 = s1.union(s2)
             self.assertIsInstance(s3, LiteSet)
@@ -157,6 +157,31 @@ class Test_LiteSet(TestCase):
                 self.assertIn(i, s3)
             for i in s2:
                 self.assertIn(i, s3)
+    
+    def test_union_against_set(self):
+        '''tests if LiteSet mirrors what a set would do for set.union against other sets'''
+        with LiteSet(range(0, 10)) as s1:
+            s2 = set(range(10, 20))
+            s3 = s1.union(s2)
+            s4 = s2.union(s1)
+            self.assertIsInstance(s3, LiteSet)
+            self.assertIsInstance(s4, set)
+            # test subsets against the LiteSet
+            self.assertTrue(s1.issubset(s3))
+            self.assertTrue(s2.issubset(s3))
+            self.assertTrue(s3.issuperset(s1))
+            self.assertTrue(s3.issuperset(s2))
+            # ensure the same logic works with normal sets
+            self.assertTrue(s1.issubset(s4))
+            self.assertTrue(s2.issubset(s4))
+            self.assertTrue(s4.issuperset(s1))
+            self.assertTrue(s4.issuperset(s2))
+            for i in s1:
+                self.assertIn(i, s3)
+                self.assertIn(i, s4)
+            for i in s2:
+                self.assertIn(i, s3)
+                self.assertIn(i, s4)
             
 
 class Test_LiteSet_HypthesisBeatdown(TestCase):
