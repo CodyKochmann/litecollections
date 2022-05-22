@@ -51,7 +51,17 @@ class Test_LiteDict(TestCase):
                 assert k in d, [k, d.keys()]
                 assert d[k] == 'waffle', repr(d[k])
                 assert _k+1 == len(d), [_k+1, len(d)]
-                
+    
+    def test_length_functionality(self):
+        '''tests if LiteDict mirrors what a dict would do for len()'''
+        with LiteDict() as d:
+            test_string = 'hello world'
+            dict_to_mirror = {}
+            for nth, letter in enumerate(test_string):
+                d[letter] = nth
+                dict_to_mirror[letter] = nth
+                self.assertEqual(len(dict_to_mirror), len(d))
+
     #def test_str_keys_with_persistence(self):
     #    print('now for persistence (this should fail if ran twice)')
     #    with LiteDict('persistent_dict.db') as d:
