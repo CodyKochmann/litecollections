@@ -277,6 +277,27 @@ class Test_LiteSet(TestCase):
                     self.assertNotIn(i, s1)
                     self.assertNotIn(i, std_s1)
 
+    def test_intersection_update(self):
+        '''tests if LiteSet mirrors what a set would do for set.intersection_update against other sets'''
+        for _ in range(4):
+            with LiteSet() as s1, LiteSet() as s2:
+                for _ in range(4):
+                    s1.add(randint(0, 8))
+                    s2.add(randint(0, 8))
+                og_s1 = set(s1)
+                std_s1 = set(s1)
+                self.assertSetEqual(s1, std_s1)
+                s1.intersection_update(s2)
+                std_s1.intersection_update(s2)
+                self.assertSetEqual(s1, std_s1)
+                for i in s2:
+                    if i in og_s1:
+                        self.assertIn(i, s1)
+                        self.assertIn(i, std_s1)
+                    else:
+                        self.assertNotIn(i, s1)
+                        self.assertNotIn(i, std_s1)
+
 class Test_LiteSet_HypthesisBeatdown(TestCase):
     def generate_type_test(self, member_strategy):
         '''acts as a harness for type hypothesis to try different type combos'''

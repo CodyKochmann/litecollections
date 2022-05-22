@@ -225,3 +225,17 @@ class LiteSet(LiteCollection):
             self._autocommit = autocommit_before
         if self._autocommit:
             self.commit()
+    
+    def intersection_update(self, items_to_intersect):
+        '''Update a set with the intersection of itself and another'''
+        iter(items_to_intersect)  # assert items_to_intersect is iterable
+        autocommit_before = self._autocommit
+        try:
+            self._autocommit = False
+            # perf note: this would be faster with an insert many operation later
+            for v in self.difference(items_to_intersect):
+                self.discard(v)
+        finally:
+            self._autocommit = autocommit_before
+        if self._autocommit:
+            self.commit()
