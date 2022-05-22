@@ -182,7 +182,71 @@ class Test_LiteSet(TestCase):
             for i in s2:
                 self.assertIn(i, s3)
                 self.assertIn(i, s4)
-            
+
+    def test_intersection(self):
+        '''tests if LiteSet mirrors what a set would do for set.union against other LiteSets'''
+        with LiteSet(range(0, 10)) as s1, LiteSet(range(5, 15)) as s2:
+            self.assertSetEqual(
+                set(s1.intersection(s2)),
+                set(s2.intersection(s1))
+            )
+            std_s1 = set(range(0, 10))
+
+            self.assertSetEqual(
+                set(s1),
+                std_s1
+            )
+
+            s3 = s1.intersection(s2)
+            std_s3 = std_s1.intersection(s2)
+
+            self.assertSetEqual(
+                s3,
+                std_s3
+            )
+
+            self.assertIsInstance(s3, LiteSet)
+            self.assertIsInstance(std_s3, set)
+
+            self.assertTrue(s3.issubset(s1))
+            self.assertTrue(std_s3.issubset(std_s1))
+            self.assertTrue(s3.issubset(s2))
+            self.assertTrue(std_s3.issubset(s2))
+
+            self.assertTrue(s1.issuperset(s3))
+            self.assertTrue(std_s1.issuperset(std_s3))
+            self.assertTrue(s2.issuperset(s3))
+            self.assertTrue(s2.issuperset(std_s3))
+
+            for i in s3:
+                self.assertIn(i, s1)
+                self.assertIn(i, s2)
+
+            for i in std_s3:
+                self.assertIn(i, std_s1)
+                self.assertIn(i, s2)
+
+    def test_difference(self):
+        '''tests if LiteSet mirrors what a set would do for set.difference against other sets'''
+        with LiteSet(range(0, 10)) as s1, LiteSet(range(5, 15)) as s2:
+            std_s2 = set(range(5,15))
+            self.assertSetEqual(s2, std_s2)
+            self.assertSetEqual(
+                s2.difference(s1),
+                std_s2.difference(s1)
+            )
+            self.assertSetEqual(
+                std_s2.difference(s1, s2),
+                set()
+            )
+            self.assertSetEqual(
+                s2.difference(s1, s2),
+                set()
+            )
+            self.assertSetEqual(
+                s1.difference(s2),
+                s1.difference(std_s2)
+            )
 
 class Test_LiteSet_HypthesisBeatdown(TestCase):
     def generate_type_test(self, member_strategy):

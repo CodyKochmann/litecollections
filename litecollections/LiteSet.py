@@ -176,3 +176,14 @@ class LiteSet(LiteCollection):
         output = LiteSet(another_set)
         output.update(self)
         return output
+    
+    def intersection(self, another_set):
+        '''Return the intersection of two sets as a new set.'''
+        return LiteSet(i for i in another_set if i in self)
+    
+    def difference(self, other_set, *more_sets):
+        '''Return the difference of two or more sets as a new set'''
+        all_sets = other_set, *more_sets
+        # tempted to build a new LiteSet here to compare against one
+        # however that wont work well if the sets are massive.
+        return LiteSet(i for i in self if not any(i in s for s in all_sets))
