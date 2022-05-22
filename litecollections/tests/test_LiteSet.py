@@ -77,7 +77,7 @@ class Test_LiteSet(TestCase):
 
     
     def test_clear(self):
-        '''tests if LiteSet mirrors what a set would do for len()'''
+        '''tests if LiteSet mirrors what a set would do for set.clear()'''
         with LiteSet() as s:
             test_string = 'hello world'
             set_to_mirror = set()
@@ -91,6 +91,26 @@ class Test_LiteSet(TestCase):
                 set_to_mirror.clear()
                 self.assertEqual(len(set_to_mirror), len(s))
                 self.assertEqual(len(s), 0)
+
+    def test_remove(self):
+        '''tests if LiteSet mirrors what a set would do for set.remove()'''
+        with LiteSet() as s:
+            test_string = 'hello world'
+            set_to_mirror = set()
+            for nth, letter in enumerate(test_string):
+                set_to_mirror.add(letter)
+                self.assertIn(letter, set_to_mirror)
+                s.add(letter)
+                self.assertIn(letter, s)
+                self.assertEqual(len(set_to_mirror), len(s))
+                set_to_mirror.remove(letter)
+                s.remove(letter)
+                self.assertEqual(len(set_to_mirror), len(s))
+                # ensure both raise KeyErrors if you try to remove letter twice
+                with self.assertRaises(KeyError):
+                    set_to_mirror.remove(letter)
+                with self.assertRaises(KeyError):
+                    s.remove(letter)
 
 
 class Test_LiteSet_HypthesisBeatdown(TestCase):
