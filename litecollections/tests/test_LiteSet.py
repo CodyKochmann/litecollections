@@ -22,7 +22,7 @@ class Test_LiteSet(TestCase):
         set_to_mirror = set()
         methods_of_a_set = {i for i in dir(set_to_mirror) if callable(getattr(set_to_mirror, i))}
         with LiteSet() as s:
-            methods_of_a_LiteSet = {i for i in dir(s) if callable(getattr(s, i))}
+            methods_of_a_LiteSet = {i for i in dir(s) if callable(getattr(s, i)) and i in methods_of_a_set}
             self.assertSetEqual(methods_of_a_set, methods_of_a_LiteSet)
         
     def test_int_members(self):
@@ -61,7 +61,7 @@ class Test_LiteSet(TestCase):
                 self.assertIn(k, s)
                 self.assertEqual(_k+1, len(s))
             for i in s:
-                self.assertIsInstance(i, str)
+                self.assertIsInstance(i, bytes)
     
     def test_length_functionality(self):
         '''tests if LiteSet mirrors what a set would do for len()'''
@@ -92,7 +92,7 @@ class Test_LiteSet_HypthesisBeatdown(TestCase):
                 self.assertEqual(len_before, len(s))
                 # test deletion 
                 s.discard(k)
-                self.assertNotIn(k, d)
+                self.assertNotIn(k, s)
                 # reinsert to keep building up a db
                 s.add(k)
                 self.assertIn(k, s)
