@@ -187,3 +187,7 @@ class LiteSet(LiteCollection):
         # tempted to build a new LiteSet here to compare against one
         # however that wont work well if the sets are massive.
         return LiteSet(i for i in self if not any(i in s for s in all_sets))
+
+    def isdisjoint(self, other_set):
+        '''Return True if two sets have a null intersection'''
+        return not any(i in self for i in other_set)
