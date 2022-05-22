@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from .LiteCollection import LiteCollection
-from .LiteExceptions import InvalidPositionalArgCount
+from .LiteExceptions import InvalidPositionalArgCount, EmptyLiteSet
 from .loader import load, dump
 
-class EmptyLiteSet(KeyError):
-    '''raised when trying to pull a key from an empty LiteSet'''
+
 
 def hashable(obj) -> bool:
     ''' boolean check for hashable inputs '''
@@ -94,7 +93,14 @@ class LiteSet(LiteCollection):
         ))
         if self._autocommit:
             self.commit()
-        
+    
+    def remove(self, value):
+        '''Remove an element from a set; it must be a member. If the element is not a member, raise a KeyError.'''
+        if value in self:
+            self.discard(value)
+        else:
+            raise KeyError(value)
+
     def __iter__(self):
         '''Iterate through the values in the LiteSet'''
         query = self._cursor.execute(
