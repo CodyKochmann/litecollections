@@ -63,7 +63,7 @@ class Test_LiteSet(TestCase):
             for i in s:
                 self.assertIsInstance(i, bytes)
     
-    def test_length_functionality(self):
+    def test_length(self):
         '''tests if LiteSet mirrors what a set would do for len()'''
         with LiteSet() as s:
             test_string = 'hello world'
@@ -74,6 +74,23 @@ class Test_LiteSet(TestCase):
                 set_to_mirror.add(letter)
                 self.assertIn(letter, set_to_mirror)
                 self.assertEqual(len(set_to_mirror), len(s))
+
+    
+    def test_clear(self):
+        '''tests if LiteSet mirrors what a set would do for len()'''
+        with LiteSet() as s:
+            test_string = 'hello world'
+            set_to_mirror = set()
+            for nth, letter in enumerate(test_string):
+                s.add(letter)
+                self.assertIn(letter, s)
+                set_to_mirror.add(letter)
+                self.assertIn(letter, set_to_mirror)
+                self.assertEqual(len(set_to_mirror), len(s))
+                s.clear()
+                set_to_mirror.clear()
+                self.assertEqual(len(set_to_mirror), len(s))
+                self.assertEqual(len(s), 0)
 
 
 class Test_LiteSet_HypthesisBeatdown(TestCase):
