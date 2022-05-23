@@ -255,3 +255,9 @@ class LiteSet(LiteCollection):
             self._autocommit = autocommit_before
         if self._autocommit:
             self.commit()
+    
+    __lte__ = issubset
+    __gte__ = issuperset
+    __or__ = union
+    __and__ = intersection
+    __sub__ = difference
