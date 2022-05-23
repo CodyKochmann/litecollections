@@ -239,3 +239,19 @@ class LiteSet(LiteCollection):
             self._autocommit = autocommit_before
         if self._autocommit:
             self.commit()
+
+    def symmetric_difference_update(self, other_set):
+        '''Update a set with the symmetric difference of itself and another'''
+        iter(other_set)  # assert other_set is iterable
+        autocommit_before = self._autocommit
+        try:
+            self._autocommit = False
+            # perf note: this would be faster with an insert many operation later
+            symmetric_diff = self.symmetric_difference(other_set)
+            self.clear()
+            self.update(symmetric_diff)
+            symmetric_diff.close()
+        finally:
+            self._autocommit = autocommit_before
+        if self._autocommit:
+            self.commit()
